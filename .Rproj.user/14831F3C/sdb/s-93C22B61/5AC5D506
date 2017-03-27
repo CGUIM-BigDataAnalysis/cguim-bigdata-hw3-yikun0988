@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"長庚大學 大數據分析方法 作業三\"\noutput: github_document\n---\n\n## 網站資料爬取\n```{r}\n#這是R Code Chunk\nlibrary(rvest) ##第一次使用要先安裝 install.packages(\"rvest\")\nfor(i in 1:5){  ##一頁20筆，要跑5頁才有100筆\n    PTTmovie <- paste(\"https://www.ptt.cc/bbs/movie/index\",i,\".html\",sep=\"\")\n    Title <- read_html(PTTmovie, encoding = \"UTF-8\") %>% html_nodes(\".title a\") %>% html_text()\n    PushNum <- read_html(PTTmovie, encoding = \"UTF-8\") %>% html_nodes(\".nrec\") %>% html_text()\n    Author <- read_html(PTTmovie, encoding = \"UTF-8\") %>% html_nodes(\".author\") %>% html_text()\n    if(i==1){\n    a = data.frame(Title, PushNum, Author)\n    }\n    else if(i==2){\n    b = data.frame(Title, PushNum, Author)\n    }\n    else if(i==3){\n    c = data.frame(Title, PushNum, Author)\n    }\n    else if(i==4){\n    d = data.frame(Title, PushNum, Author)\n    }\n    else {\n    e = data.frame(Title, PushNum, Author)\n    }\n}\nmoivedata = rbind(a, b, c, d, e) ##整合5個data.frame\nprint(moivedata)\n##read_html\n##html_nodes\n##html_text\n```\n\n\n## 爬蟲結果呈現\n```{r}\nknitr::kable(moivedata[1:100,c(\"Title\",\"PushNum\",\"Author\")])  ##請將iris取代為上個步驟中產生的爬蟲資料資料框\n```\n\n## 解釋爬蟲結果 \n```{r}\nstr(moivedata)\n```\n\n解釋解釋解釋解釋:\n    str()用途廣泛，在我想了解一筆資料時或未知變數的時候，就是使用它的時候，str()顯示資料結構，列出資料內每個欄位的狀態，以上就使用str()列出了moivedata中有100筆觀察值，有5個變項，其中level為自訂義，代表每遇到一個不同的文章標題都會有一個新的level產生，所以這裡有97個不同的文章標題，21個不同的推文數，以及61個不同的作者。\n\n```{r}\ntable(moivedata $ Author)\nsort(table(moivedata$Author),decreasing=TRUE)[1:5]\n```\n\n解釋解釋解釋解釋:\n    table()能彙整factor、list、data frame中分類組合發生次數，table(moivedata $ Author)把moivedata中的Author欄位每個作者的發文數給計算出來，我們可以看到firewalker在前100篇文章中就發了15篇文章。\n\n人工結論與解釋解釋解釋解釋解釋解釋解釋:\n    在頁面部分的網址部分，因為ptt的網址一頁一頁有規律性，差別只在於index後面的數字，所以換頁不是什麼大困難，再來因為需要100筆資料，所以我總共搜尋了5頁，在分析的時候我們發現firewalker在前100篇文章中就發了15篇文章，firewalker可能平時很閒，或是他像是板主一樣在照顧電影版，所以在前5頁的100篇文章中就發了15篇文章，應該是一個發文狂人或是電影愛好者，再來我利用sort()把前5筆次數高的作者給顯示出來，發現還有一位filmwalker，我推測它有可能是firewalker的粉絲或朋友，也可能根本就是分身帳號。",
+    "created" : 1490536794539.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1314351085",
+    "id" : "5AC5D506",
+    "lastKnownWriteTime" : 1490591787,
+    "last_content_update" : 1490591789953,
+    "path" : "C:/Users/jeffp/Desktop/cguim-bigdata-hw3-yikun0988/README.Rmd",
+    "project_path" : "README.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

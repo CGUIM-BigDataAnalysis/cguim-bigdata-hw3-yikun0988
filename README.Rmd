@@ -3,67 +3,59 @@ title: "長庚大學 大數據分析方法 作業三"
 output: github_document
 ---
 
-## 作業說明 （繳交時請直接刪除這個章節）
-
-作業目的：練習初級爬蟲，並將爬蟲結果整理成資料框data.frame
-
-依下列指示，完成網站內文分析：
-
-- 爬取指定網站內容
-    - 學號結尾 0,4,8:[Ptt Tech_Job 版](https://www.ptt.cc/bbs/Tech_Job/index.html)
-    - 學號結尾 1,5,9:[Ptt NBA 版](https://www.ptt.cc/bbs/NBA/index.html)
-    - 學號結尾 2,6:[Ptt LoL 版](https://www.ptt.cc/bbs/LoL/index.html)
-    - 學號結尾 3,7:[Ptt movie 版](https://www.ptt.cc/bbs/movie/index.html)
-    
-- 試著爬出**至少100篇**文章（`30pt`）的**標題**、**推文數**與**作者ID**（各`10pt`）
-    - 資料框欄位名稱：
-        - **標題**：Title
-        - **推文數**：PushNum
-        - **作者ID**：Author
-    - 一頁只有20篇，該怎麼辦？
-        - 提示：使用for + rbind()將分批爬取出的資料結合
-        - 範例：dataframeAll<-rbind(dataframe1,dataframe2) 
-        - 參考：[6.6 資料組合](http://yijutseng.github.io/DataScienceRBook/manipulation.html#section-6.6)
-    
-- 將爬取出的資料輸出至Markdown報告中（`10pt`）
-    - 使用knitr::kable(資料框物件)整理輸出
-    
-- 用文字搭配程式碼解釋爬蟲結果 
-    - 共爬出幾篇文章標題？（程式碼與文字解釋各`5pt`）
-        - dim(), nrow(), str()皆可
-    - 哪個作者文章數最多？（程式碼與文字解釋各`5pt`）
-        - table()
-    - 其他爬蟲結果解釋（`10pt`）
-        - 試著找出有趣的現象，不一定要用程式碼搭配解釋，也可只用文字
-
-    
-
 ## 網站資料爬取
 ```{r}
 #這是R Code Chunk
 library(rvest) ##第一次使用要先安裝 install.packages("rvest")
+for(i in 1:5){  ##一頁20筆，要跑5頁才有100筆
+    PTTmovie <- paste("https://www.ptt.cc/bbs/movie/index",i,".html",sep="")
+    Title <- read_html(PTTmovie, encoding = "UTF-8") %>% html_nodes(".title a") %>% html_text()
+    PushNum <- read_html(PTTmovie, encoding = "UTF-8") %>% html_nodes(".nrec") %>% html_text()
+    Author <- read_html(PTTmovie, encoding = "UTF-8") %>% html_nodes(".author") %>% html_text()
+    if(i==1){
+    a = data.frame(Title, PushNum, Author)
+    }
+    else if(i==2){
+    b = data.frame(Title, PushNum, Author)
+    }
+    else if(i==3){
+    c = data.frame(Title, PushNum, Author)
+    }
+    else if(i==4){
+    d = data.frame(Title, PushNum, Author)
+    }
+    else {
+    e = data.frame(Title, PushNum, Author)
+    }
+}
+moivedata = rbind(a, b, c, d, e) ##整合5個data.frame
+print(moivedata)
 ##read_html
 ##html_nodes
 ##html_text
 ```
 
+
 ## 爬蟲結果呈現
 ```{r}
-#這是R Code Chunk
-knitr::kable(iris) ##請將iris取代為上個步驟中產生的爬蟲資料資料框
+knitr::kable(moivedata[1:100,c("Title","PushNum","Author")])  ##請將iris取代為上個步驟中產生的爬蟲資料資料框
 ```
 
 ## 解釋爬蟲結果 
 ```{r}
-#這是R Code Chunk
+str(moivedata)
 ```
 
-解釋解釋解釋解釋
+解釋解釋解釋解釋:
+    str()用途廣泛，在我想了解一筆資料時或未知變數的時候，就是使用它的時候，str()顯示資料結構，列出資料內每個欄位的狀態，以上就使用str()列出了moivedata中有100筆觀察值，有5個變項，其中level為自訂義，代表每遇到一個不同的文章標題都會有一個新的level產生，所以這裡有97個不同的文章標題，21個不同的推文數，以及61個不同的作者。
 
 ```{r}
-#這是R Code Chunk
+table(moivedata $ Author)
+sort(table(moivedata$Author),decreasing=TRUE)[1:5]
 ```
 
-解釋解釋解釋解釋
+解釋解釋解釋解釋:
+    table()能彙整factor、list、data frame中分類組合發生次數，table(moivedata $ Author)把moivedata中的Author欄位每個作者的發文數給計算出來，我們可以看到firewalker在前100篇文章中就發了15篇文章。
 
-人工結論與解釋解釋解釋解釋解釋解釋解釋
+人工結論與解釋解釋解釋解釋解釋解釋解釋:
+    在頁面部分的網址部分，因為ptt的網址一頁一頁有規律性，差別只在於index後面的數字，所以換頁不是什麼大困難，再來因為需要100筆資料，所以我總共搜尋了5頁，在分析的時候我們發現firewalker在前100篇文章中就發了15篇文章，firewalker可能平時很閒，或是他像是板主一樣在照顧電影版，所以在前5頁的100篇文章中就發了15篇文章，應該是一個發文狂人或是電影愛好者，再來我利用sort()把前5筆次數高的作者給顯示出來，發現還有一位filmwalker，我推測它有可能是firewalker的粉絲或朋友，也可能根本就是分身帳號。
